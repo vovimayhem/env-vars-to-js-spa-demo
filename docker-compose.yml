@@ -1,0 +1,54 @@
+volumes:
+  node_modules:
+  vscode_extensions:
+  vscode_insiders_extensions:
+
+services:
+  development: &app
+    image: vovimayhem/env-vars-js-spa-demo:development
+    build: &app_build
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        DEVELOPER_UID: ${UID:-1000}
+        DEVELOPER_USERNAME: ${USER:-you}
+    volumes:
+      # Mount the app code into the app containers:
+      - .:/workspaces/env-vars-to-js-spa-demo
+      # Replace the container's node_modules with our volume:
+      - node_modules:/workspaces/env-vars-to-js-spa-demo/node_modules
+
+    # Keep the stdin open, so we can attach to our app container's process
+    # and do things such as byebug, etc:
+    stdin_open: true
+
+    # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
+    tty: true
+
+    # Required for ptrace-based debuggers like C++, Go, and Rust
+    cap_add:
+      - SYS_PTRACE
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined
+
+    # Specify environment variables available for our app containers. We'll
+    # leave a YML anchor in case we need to override or add more variables if
+    # needed on each app service:
+    environment: &app_environment
+      MY_NAME: ${DEMO_SALUTE_NAME:-Francis} # :)
+      DEBIAN_FRONTEND: dialog
+  
+  # This one's used by Visual Studio Devcontainer:
+  devcontainer:
+    <<: *app
+    volumes:
+      - .:/workspaces/env-vars-to-js-spa-demo
+      - node_modules:/workspaces/env-vars-to-js-spa-demo/node_modules
+      - vscode_extensions:/home/${USER:-you}/.vscode-server/extensions
+      - vscode_insiders_extensions:/home/${USER:-you}/.vscode-server-insiders/extensions
+    environment:
+      <<: *app_environment
+      # Use VSCode as editor:
+      EDITOR: code -w
