@@ -58,8 +58,8 @@ RUN yarn install
 # In this stage we'll add the packages, libraries and tools required in our
 # day-to-day development process.
 
-# Use the "development-base" stage as base:
-FROM development-base AS development
+# Use the "testing" stage as base:
+FROM testing AS development
 
 # Change to root user to install the development packages:
 USER root
@@ -109,9 +109,6 @@ RUN DEVELOPER_USERNAME=$(getent passwd ${DEVELOPER_UID} | awk -F: '{print $1}') 
 
 # Change back to the developer user:
 USER ${DEVELOPER_UID}
-
-# Install the full node package list:
-RUN yarn install
 
 # Stage 4: Builder =============================================================
 # In this stage we'll add the rest of the code, compile assets, and perform a

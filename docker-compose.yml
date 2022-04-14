@@ -4,8 +4,11 @@ volumes:
   vscode_insiders_extensions:
 
 services:
+  # A development container for devs avoiding Visual Studio Code:
   development: &app
     image: vovimayhem/env-vars-js-spa-demo:development
+    ports:
+      - ${DEMO_WEB_PORT:-3000}:3000
     build: &app_build
       context: .
       dockerfile: Dockerfile
@@ -13,6 +16,9 @@ services:
       args:
         DEVELOPER_UID: ${UID:-1000}
         DEVELOPER_USERNAME: ${USER:-you}
+    command:
+      - yarn
+      - dev
     volumes:
       # Mount the app code into the app containers:
       - .:/workspaces/env-vars-to-js-spa-demo
@@ -40,9 +46,17 @@ services:
       MY_NAME: ${DEMO_SALUTE_NAME:-Francis} # :)
       DEBIAN_FRONTEND: dialog
   
-  # This one's used by Visual Studio Devcontainer:
+  # The container for us mortal devs using Visual Studio Code:
   devcontainer:
     <<: *app
+    
+    # I'm removing any port configuration - we'll let Visual Studio Devcontainer
+    # to manage those:
+    ports: []
+    
+    # Overrides default command so things don't shut down after the process ends.
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    
     volumes:
       - .:/workspaces/env-vars-to-js-spa-demo
       - node_modules:/workspaces/env-vars-to-js-spa-demo/node_modules
