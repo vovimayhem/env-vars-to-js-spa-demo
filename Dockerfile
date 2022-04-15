@@ -137,4 +137,5 @@ RUN yarn build
 
 FROM nginx:alpine AS release
 
+COPY process-index-html.sh /docker-entrypoint.d/40-process-index-html.sh
 COPY --from=builder /workspaces/env-vars-to-js-spa-demo/dist /usr/share/nginx/html
