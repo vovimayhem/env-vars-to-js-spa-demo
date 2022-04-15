@@ -68,6 +68,8 @@ USER root
 RUN apt-get install -y --no-install-recommends \
   # Adding bash autocompletion as git without autocomplete is a pain...
   bash-completion \
+  # Installing gettext-base will get for us the envsubst command:
+  gettext-base \
   # gpg & gpgconf is used to get Git Commit GPG Signatures working inside the
   # VSCode devcontainer:
   gpg \
