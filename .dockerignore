@@ -34,3 +34,7 @@ docker-compose.yml
 Dockerfile
 .devcontaioner.json
 .vscode/
+
+# Ignore dotenv files:
+**/*.env
+!**/*.example.env
