@@ -137,5 +137,8 @@ RUN yarn build
 
 FROM nginx:alpine AS release
 
+# Add the "process-index-html" script to the container's entrypoint script list:
 COPY process-index-html.sh /docker-entrypoint.d/40-process-index-html.sh
+
+# Copy the compiled app:
 COPY --from=builder /workspaces/env-vars-to-js-spa-demo/dist /usr/share/nginx/html
