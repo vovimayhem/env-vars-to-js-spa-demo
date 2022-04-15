@@ -43,7 +43,7 @@ services:
     # leave a YML anchor in case we need to override or add more variables if
     # needed on each app service:
     environment: &app_environment
-      MY_NAME: ${DEMO_SALUTE_NAME:-Francis} # :)
+      VITE_APP_SALUTE_NAME: ${DEMO_SALUTE_NAME:-Francis} # :)
       DEBIAN_FRONTEND: dialog
   
   # The container for us mortal devs using Visual Studio Code:
