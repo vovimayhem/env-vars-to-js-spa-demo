@@ -115,6 +115,24 @@ USER ${DEVELOPER_UID}
 # cleanup for the releasable image.
 FROM testing AS builder
 
+# These will be used only to compile the app - in this case, they will end on
+# on the build's index.html file:
+ENV VITE_APP_SALUTE_NAME="\$VITE_APP_SALUTE_NAME"
+
 # Receive the developer user ID argument again - ARGS won't persist between
 # stages on non-buildkit builds:
 ARG DEVELOPER_UID=1000
+
+# Copy the code:
+COPY --chown=${DEVELOPER_UID} . /workspaces/env-vars-to-js-spa-demo/
+
+# Build the app:
+RUN yarn build
+
+# Stage 5: Release =============================================================
+# IN this stage we'll be starting off from NGinx, and add the compiled app as
+# static assets:
+
+FROM nginx:alpine AS release
+
+COPY --from=builder /workspaces/env-vars-to-js-spa-demo/dist /usr/share/nginx/html

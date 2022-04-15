@@ -66,3 +66,14 @@ services:
       <<: *app_environment
       # Use VSCode as editor:
       EDITOR: code -w
+
+
+  staging:
+    image: vovimayhem/env-vars-js-spa-demo:latest
+    build:
+      <<: *app_build
+      target: release
+    ports:
+      - ${DEMO_WEB_PORT:-3000}:80
+    environment:
+      VITE_APP_SALUTE_NAME: ${DEMO_SALUTE_NAME:-Francis} # :)
